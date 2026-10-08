@@ -34,6 +34,7 @@ export class StatusesController {
   @ApiResponse({ status: 201, description: 'Status berhasil dibuat' })
   @ApiResponse({ status: 403, description: 'Bukan member / bukan admin proyek' })
   @ApiResponse({ status: 404, description: 'Proyek tidak ditemukan' })
+  @ApiResponse({ status: 409, description: 'Konflik perubahan bersamaan; muat ulang dan coba lagi' })
   create(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Req() req: any,
@@ -65,6 +66,7 @@ export class StatusesController {
   @ApiResponse({ status: 400, description: 'Satu atau lebih status_id invalid' })
   @ApiResponse({ status: 403, description: 'Bukan member / bukan admin proyek' })
   @ApiResponse({ status: 404, description: 'Proyek tidak ditemukan' })
+  @ApiResponse({ status: 409, description: 'Konflik perubahan bersamaan; muat ulang dan coba lagi' })
   reorder(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Req() req: any,
@@ -81,6 +83,7 @@ export class StatusesController {
   @ApiResponse({ status: 400, description: 'Validasi default status gagal' })
   @ApiResponse({ status: 403, description: 'Bukan member / bukan admin proyek' })
   @ApiResponse({ status: 404, description: 'Status tidak ditemukan' })
+  @ApiResponse({ status: 409, description: 'Konflik perubahan bersamaan; muat ulang dan coba lagi' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req: any,
@@ -95,9 +98,11 @@ export class StatusesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Hapus status dengan proteksi (Admin Only)' })
   @ApiResponse({ status: 204, description: 'Status berhasil dihapus' })
-  @ApiResponse({ status: 400, description: 'Status terakhir atau masih digunakan oleh task' })
+  
+  @ApiResponse({ status: 400, description: 'Status terakhir dalam project',})
   @ApiResponse({ status: 403, description: 'Bukan member / bukan admin proyek' })
   @ApiResponse({ status: 404, description: 'Status tidak ditemukan' })
+  @ApiResponse({ status: 409, description: 'Status masih digunakan oleh task atau konflik perubahan bersamaan'})
   remove(
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req: any,
